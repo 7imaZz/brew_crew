@@ -1,4 +1,5 @@
 import 'package:brew_crew/pojo/user_model.dart';
+import 'package:brew_crew/service/database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthService {
@@ -44,11 +45,14 @@ class AuthService {
     try{
       UserCredential credential = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       User user = credential.user;
+      DatabaseService(uid: user.uid).updateUserData('0', 'New Crew Member', 100);
       return _userFromFirebase(user);
     }catch(e){
       print(e.toString());
     }
   }
+
+
 
   Future signOut() async{
     try {

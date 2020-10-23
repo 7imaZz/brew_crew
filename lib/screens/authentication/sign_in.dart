@@ -1,4 +1,6 @@
 import 'package:brew_crew/service/auth_service.dart';
+import 'package:brew_crew/shared/constants.dart';
+import 'package:brew_crew/shared/loading.dart';
 import 'package:flutter/material.dart';
 
 
@@ -21,9 +23,12 @@ class _SignInState extends State<SignIn> {
   String password = '';
   String error = '';
 
+  bool loading = false;
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return loading? Loading(): Scaffold(
+      resizeToAvoidBottomPadding: false,
       backgroundColor: Colors.brown[100],
       appBar: AppBar(
         actions: [
@@ -53,6 +58,7 @@ class _SignInState extends State<SignIn> {
                     email = val;
                   });
                 },
+                decoration: customInputDecoration('Email')
               ),
               SizedBox(height: 20.0),
               TextFormField(
@@ -61,6 +67,7 @@ class _SignInState extends State<SignIn> {
                 onChanged: (val){
                   password = val;
                 },
+                decoration: customInputDecoration('Password')
               ),
               SizedBox(height: 20.0),
               RaisedButton(
@@ -73,10 +80,14 @@ class _SignInState extends State<SignIn> {
                 ),
                 onPressed: () async{
                   if(_formKey.currentState.validate()) {
+                    setState(() {
+                      loading = true;
+                    });
                     dynamic result = await authService.signInWithEmailAndPassword(email, password);
                     if(result == null){
                       setState(() {
                         error = 'Invalid Login';
+                        loading = false;
                       });
                     }
                   }
@@ -88,7 +99,8 @@ class _SignInState extends State<SignIn> {
                 style: TextStyle(
                   color: Colors.red,
                 ),
-              )
+              ),
+              Expanded(child: SizedBox(height: 20.0)),
             ],
           ),
         )

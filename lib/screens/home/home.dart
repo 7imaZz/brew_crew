@@ -1,4 +1,5 @@
 import 'package:brew_crew/pojo/brew_model.dart';
+import 'package:brew_crew/screens/home/setting_form.dart';
 import 'package:brew_crew/service/auth_service.dart';
 import 'package:brew_crew/service/database.dart';
 import 'package:flutter/material.dart';
@@ -14,8 +15,18 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
+    void _showSettingsPanel(){
+      showModalBottomSheet(context: context, builder: (context){
+        return Container(
+          padding: EdgeInsets.symmetric(horizontal: 50.0, vertical: 20.0),
+          child: SettingsForm(),
+        );
+      });
+    }
+    
     return StreamProvider<List<Brew>>.value(
-      value: DatabaseService().get(),
+      value: DatabaseService().brews,
       child: Container(
         child: Scaffold(
           backgroundColor: Colors.brown[50],
@@ -30,10 +41,22 @@ class Home extends StatelessWidget {
                 },
                 label: Text('Sign Out'),
                 icon: Icon(Icons.person),
-              )
+              ),
+              FlatButton.icon(
+                label: Text('Settings'),
+                icon: Icon(Icons.settings),
+                onPressed: () => _showSettingsPanel(),
+              ),
             ],
           ),
-          body: BrewList(),
+          body: Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/coffee_bg.png'),
+                fit: BoxFit.cover
+              ),
+            ),
+            child: BrewList(),),
         ),
       ),
     );

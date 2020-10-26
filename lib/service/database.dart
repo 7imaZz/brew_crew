@@ -1,4 +1,5 @@
 import 'package:brew_crew/pojo/brew_model.dart';
+import 'package:brew_crew/pojo/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DatabaseService{
@@ -33,12 +34,25 @@ class DatabaseService{
     }
   }
 
-  Stream<List<Brew>> get (){
+  UserData _getUserDataFromSnapshot(DocumentSnapshot snapshot){
+    return UserData(
+      uid: uid,
+      name: snapshot.data()['name'],
+      sugar: snapshot.data()['sugars'],
+      strength: snapshot.data()['strength']
+    );
+  }
+
+  Stream<List<Brew>> get brews{
     try {
       return brewCollection.snapshots().map(_getBrewsFromSnapshot);
     }catch(e){
       print(e.toString());
       return null;
     }
+  }
+
+  Stream<UserData> get userData{
+    return brewCollection.doc(uid).snapshots().map(_getUserDataFromSnapshot);
   }
 }
